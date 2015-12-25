@@ -5,7 +5,9 @@ import curses
 import time
 import sys
 import arpAttack
+import arpScan
 import curses.textpad
+from scapy.route import *
 
 class Main():
 
@@ -13,7 +15,6 @@ class Main():
         print "execute in curses mode..."
         for i in range(0,2):
             time.sleep(1)
-        self.interface = ""
         curses.wrapper(self.main)
 
     def main(self,stdscr):
@@ -21,7 +22,9 @@ class Main():
         Set global variables ,colors and launch 
         the curses's tabs(in 1.0 version only arpAttack())
         """
-        
+        self.base_X = 1
+        self.base_Y = 2
+        self.length_win = 85
         self.stdscr = stdscr
         
         # Clear screen
@@ -35,57 +38,69 @@ class Main():
         #set background
         self.stdscr.bkgd('\t',curses.color_pair(1))
 
+        #victim e router text box
+        victim = makeTextBox(self.base_Y,self.base_X,16)
+        router = makeTextBox(self.base_Y,self.base_X+23,16)
+
         #select interface for this session
-        self.drawSelectInterface()
+        interface = self.__drawSelectInterface() #not use self.interface for consistency with victim_ip and router_ip?
+        
         self.stdscr.clear()
         
         #init attack module
-        attack = arpAttack.ArpAttack(self.stdscr,self.interface)
+        attack = arpAttack.ArpAttack(self.stdscr,interface)
         
         #future features
-        #scan = arpScan.ArpScan(stdscr)
+        scan = arpScan.ArpScan(stdscr,interface)
         #sniff = arpSniff.ArpSniff(stdscr)
         
         digit = "1"
         while 1:
             if digit == "1":
-                digit = attack.main()
-            #if digit == "2":
-                #scan
+                digit,victim_ip,router_ip = attack.main(victim,router)
+            elif digit == "2":
+                digit,victim_ip,router_ip = scan.main(victim,router)
             #if digit == "3":
                 #sniff
+            elif digit == "4":
+                stdscr.clear()
+                self.__drawNetworkTab()
+                digit = self.stdscr.getkey()
             elif digit == "q":
-                tools.firewallBlockingConf(self.interface)
+                tools.firewallBlockingConf(interface)
                 sys.exit(1)
             else:
-                stdscr.clear()
-                self.drawExitTab()
                 digit = self.stdscr.getkey()
                 
-    def drawSelectInterface(self):
-        interface = makeTextBox(7,20,16)
+    def __drawSelectInterface(self):
+        iface = makeTextBox(7,20,10)
         while 1:
-            self.stdscr.addstr(0, 0, (" "*60),curses.color_pair(2))
+            self.stdscr.addstr(0, 0, (" "*self.length_win),curses.color_pair(2))
             self.stdscr.addstr(0, 0, "Please set your network interface",curses.color_pair(2))
             drawTitle(self.stdscr,1,10)
             drawBox(self.stdscr,7,20,20,"","iFace")    
             try:
-                self.interface = interface.edit().split(" ")[0]
-                tools.firewallBlockingConf(self.interface)
+                interface = iface.edit().split(" ")[0]
+                tools.firewallBlockingConf(interface)
                 break
             except:
                 infoBox(self.stdscr,6,15,
                     " Error to set interface ","Error!")
             self.stdscr.clear()
+        return interface
             
-    def drawExitTab(self):
-        drawTitle(self.stdscr,1,10)
-        #exit tab content
-        self.stdscr.addstr(10,0,"press one more time Q to exit.",curses.color_pair(1))
+        
+    def __drawNetworkTab(self):
+        curses.textpad.rectangle(self.stdscr, self.base_Y,self.base_X-1, self.base_Y+16, self.base_X+81)
+        self.stdscr.addstr(self.base_Y,self.base_X+1,"Network Monitor",curses.color_pair(1))
+        y = 4
+        for i in str(conf.route).split("\n"):
+            self.stdscr.addstr(y,3,i,curses.color_pair(1))
+            y+=1
         #draw tabs navigator        
-        self.stdscr.addstr(0, 0, (" "*60),curses.color_pair(2))
-        self.stdscr.addstr(0, 0, "1.Attack    2.Scan    3.Sniff    Q.Quit",curses.color_pair(2))
-        self.stdscr.addstr(0, 33, "Q.Quit",curses.color_pair(3))
+        self.stdscr.addstr(0, 0, (" "*self.length_win),curses.color_pair(2))
+        self.stdscr.addstr(0, 0, "1.Attack    2.Scan    3.Sniff    4.Network    Q.Quit",curses.color_pair(2))
+        self.stdscr.addstr(0, 33, "4.Network",curses.color_pair(3))
             
 def drawTitle(stdscr,y,x):
     #draw title

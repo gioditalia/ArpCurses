@@ -7,45 +7,47 @@ import threading
 import arpCurses
 import curses.textpad
 
-class ArpAttack(threading.Thread):
+class ArpAttack():
 
     def __init__(self,stdscr,interface):
         
         self.base_X = 1
         self.base_Y = 2
+        self.length_win = 85
         self.stdscr = stdscr
         
-        self.victim_ip = "" #victim address
-        self.router_ip = "" #router address
+        
+
         self.interface = interface #physical interface
         self.attack_status = False #attack status
         self.forward_status = False #forward status
         
-        self.victim = arpCurses.makeTextBox(self.base_Y,self.base_X,16)
-
-        self.router = arpCurses.makeTextBox(self.base_Y,self.base_X+23,16)
-
         #init poison module
         self.arp_poison=poison.ArpPoison(iface=self.interface)
         
-    def main(self):
+    def main(self,victim,router):
+        
+        self.victim_ip = victim.gather().split(" ")[0] #victim address
+        if self.victim_ip != "":
+            self.arp_poison.setVictim(self.victim_ip)
+        self.router_ip = router.gather().split(" ")[0] #router address
+        if self.router_ip != "":
+            self.arp_poison.setRouter(self.router_ip)
 
         while 1:
-            self.drawTabContent()
+            self.__drawTabContent()
             
             #wait key's pression
             digit = self.stdscr.getkey()
             
             #arpcurses generic menu
-            if digit == "q":
-                return 0
-            if digit == "2" or digit == "3":
-                return digit
+            if digit == "2" or digit == "3" or digit == "4" or digit == "q":
+                return digit,self.victim_ip,self.router_ip
             
             #attack menu
             if digit == "v":    #set victim ip
                 try:
-                    self.victim_ip = self.victim.edit().split(" ")[0] #remove empty
+                    self.victim_ip = victim.edit().split(" ")[0] #remove empty
                     self.arp_poison.setVictim(self.victim_ip)         #space on strings
                 except:
                     arpCurses.infoBox(self.stdscr,self.base_Y+1,self.base_X+10,
@@ -54,7 +56,7 @@ class ArpAttack(threading.Thread):
 
             if digit == "r":    #set router ip
                 try:
-                    self.router_ip = self.router.edit().split(" ")[0]
+                    self.router_ip = router.edit().split(" ")[0]
                     self.arp_poison.setRouter(self.router_ip)
                 except:
                     arpCurses.infoBox(self.stdscr,self.base_Y+1,self.base_X+10,
@@ -72,7 +74,7 @@ class ArpAttack(threading.Thread):
                     self.attack_status = not self.attack_status
                     if self.attack_status:
                         try:
-                            t = threading.Thread(target=self.attack)
+                            t = threading.Thread(target=self.__attack)
                             t.setDaemon(True)
                             t.start()
                         except:
@@ -92,12 +94,12 @@ class ArpAttack(threading.Thread):
                         arpCurses.infoBox(self.stdscr,self.base_Y+1,self.base_X+1,
                             " Something going wrong, control your settings ","Error!")
             
-    def attack(self):
+    def __attack(self):
         while self.attack_status: #stop thread when attack_status is FALSE
             self.arp_poison.attack()
             time.sleep(5)
             
-    def drawTabContent(self):
+    def __drawTabContent(self):
         #clear screen
         self.stdscr.clear()
 
@@ -146,6 +148,7 @@ class ArpAttack(threading.Thread):
         self.stdscr.addstr(self.base_Y+10, 0, "Status:")
 
         #draw tabs navigator        
-        self.stdscr.addstr(0, 0, (" "*60),curses.color_pair(2))
-        self.stdscr.addstr(0, 0, "1.Attack    2.Scan    3.Sniff    Q.Quit",curses.color_pair(2))
+        self.stdscr.addstr(0, 0, (" "*self.length_win),curses.color_pair(2))
+        self.stdscr.addstr(0, 0, "1.Attack    2.Scan    3.Sniff    4.Network    Q.Quit",curses.color_pair(2))
         self.stdscr.addstr(0, 0, "1.Attack",curses.color_pair(3))
+        self.stdscr.refresh()
