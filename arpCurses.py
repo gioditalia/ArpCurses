@@ -20,7 +20,7 @@ class Main():
     def main(self,stdscr):
         """
         Set global variables ,colors and launch 
-        the curses's tabs(in 1.0 version only arpAttack())
+        the curses's tabs
         """
         self.base_X = 1
         self.base_Y = 2
@@ -49,9 +49,9 @@ class Main():
         
         #init attack module
         attack = arpAttack.ArpAttack(self.stdscr,interface)
+        scan = arpScan.ArpScan(stdscr,interface)
         
         #future features
-        scan = arpScan.ArpScan(stdscr,interface)
         #sniff = arpSniff.ArpSniff(stdscr)
         
         digit = "1"
