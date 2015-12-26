@@ -11,3 +11,4 @@
 ######Coming soon.
 1. Sniff tab page
   *  For collects packets from/to victim IP
+2. OsX compatibility
