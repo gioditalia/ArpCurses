@@ -1,10 +1,9 @@
 import poison
 import tools
 import curses
-import sys
 import time
 import threading
-import arpCurses
+import utils
 import curses.textpad
 
 class ArpAttack():
@@ -42,7 +41,7 @@ class ArpAttack():
             
             #arpcurses generic menu
             if digit == "2" or digit == "3" or digit == "4" or digit == "q":
-                return digit,self.victim_ip,self.router_ip
+                return digit
             
             #attack menu
             if digit == "v":    #set victim ip
@@ -50,7 +49,7 @@ class ArpAttack():
                     self.victim_ip = victim.edit().split(" ")[0] #remove empty
                     self.arp_poison.setVictim(self.victim_ip)         #space on strings
                 except:
-                    arpCurses.infoBox(self.stdscr,self.base_Y+1,self.base_X+10,
+                    utils.infoBox(self.stdscr,self.base_Y+1,self.base_X+10,
                             " Invalid victim IP ","Error!")
                     self.victim_ip = ""
 
@@ -59,16 +58,16 @@ class ArpAttack():
                     self.router_ip = router.edit().split(" ")[0]
                     self.arp_poison.setRouter(self.router_ip)
                 except:
-                    arpCurses.infoBox(self.stdscr,self.base_Y+1,self.base_X+10,
+                    utils.infoBox(self.stdscr,self.base_Y+1,self.base_X+10,
                             " Invalid router IP ","Error!")
                     self.router_ip = ""
                 
             if digit == "s":    #start/stop attack                
                 if self.victim_ip == "":
-                    arpCurses.infoBox(self.stdscr,self.base_Y+1,self.base_X+10,
+                    utils.infoBox(self.stdscr,self.base_Y+1,self.base_X+10,
                         " You must set victim IP ","Error!")
                 elif self.router_ip == "":
-                    arpCurses.infoBox(self.stdscr,self.base_Y+1,self.base_X+10,
+                    utils.infoBox(self.stdscr,self.base_Y+1,self.base_X+10,
                         " You must set router IP ","Error!")
                 else:                    
                     self.attack_status = not self.attack_status
@@ -79,7 +78,7 @@ class ArpAttack():
                             t.start()
                         except:
                             self.attack_status = False
-                            arpCurses.infoBox(self.stdscr,self.base_Y+1,self.base_X+1,
+                            utils.infoBox(self.stdscr,self.base_Y+1,self.base_X+1,
                                 " Something going wrong, control your settings ","Error!")
     
             if digit == "d":    #forward/block connections
@@ -91,7 +90,7 @@ class ArpAttack():
                         tools.firewallBlockingConf(self.interface)
                 except:
                         self.forward_status = not self.forward_status
-                        arpCurses.infoBox(self.stdscr,self.base_Y+1,self.base_X+1,
+                        utils.infoBox(self.stdscr,self.base_Y+1,self.base_X+1,
                             " Something going wrong, control your settings ","Error!")
             
     def __attack(self):
@@ -104,13 +103,13 @@ class ArpAttack():
         self.stdscr.clear()
 
         #draw textbox with label
-        arpCurses.drawBox(self.stdscr,self.base_Y,self.base_X,20,self.victim_ip,"Victim")
+        utils.drawBox(self.stdscr,self.base_Y,self.base_X,20,self.victim_ip,"Victim")
         self.stdscr.addstr(self.base_Y,self.base_X+1,"V",curses.color_pair(2))
     
-        arpCurses.drawBox(self.stdscr,self.base_Y,self.base_X+23,20,self.router_ip,"Router")
+        utils.drawBox(self.stdscr,self.base_Y,self.base_X+23,20,self.router_ip,"Router")
         self.stdscr.addstr(self.base_Y, self.base_X+24, "R",curses.color_pair(2))
             
-        arpCurses.drawBox(self.stdscr,self.base_Y+4,self.base_X+23,20,self.interface,"iFace")
+        utils.drawBox(self.stdscr,self.base_Y+4,self.base_X+23,20,self.interface,"iFace")
  
         #draw Start/Stop status box
         curses.textpad.rectangle(self.stdscr, self.base_Y,self.base_X+45, self.base_Y+6, self.base_X+58)
@@ -148,7 +147,6 @@ class ArpAttack():
         self.stdscr.addstr(self.base_Y+10, 0, "Status:")
 
         #draw tabs navigator        
-        self.stdscr.addstr(0, 0, (" "*self.length_win),curses.color_pair(2))
-        self.stdscr.addstr(0, 0, "1.Attack    2.Scan    3.Sniff    4.Network    Q.Quit",curses.color_pair(2))
+        utils.drawMenuBar(self.stdscr,self.length_win)
         self.stdscr.addstr(0, 0, "1.Attack",curses.color_pair(3))
         self.stdscr.refresh()
