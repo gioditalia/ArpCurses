@@ -67,7 +67,7 @@ class Main():
                 digit = attack.main(victim,router)
             elif digit == "2":
                 digit = scan.main(victim,router)
-            elif digit == "3":
+            if digit == "3":
                 digit = sniff.main(victim,router)
             elif digit == "4":
                 stdscr.clear()
