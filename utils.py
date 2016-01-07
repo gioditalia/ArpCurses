@@ -108,29 +108,39 @@ def makeTextBox(y,x,length=1):
     win.bkgd(' ',curses.color_pair(1))
     return curses.textpad.Textbox(win)
 
-def infoBox(stdscr,y,x,msg,title="infobox"):
+def dialogBox(stdscr,y,x,msg,title="infobox"):
     curses.textpad.rectangle(stdscr, y,x, y+4, len(msg)+x+1)    #draw message box
     stdscr.addstr(y, x+1, title,curses.color_pair(1)) #set box title
     stdscr.addstr(y+1, x+1, (" "*(len(msg))),curses.color_pair(1)) #set color for all box
     stdscr.addstr(y+2, x+1, (" "*(len(msg))),curses.color_pair(1))
     stdscr.addstr(y+3, x+1, (" "*(len(msg))),curses.color_pair(1))
     stdscr.addstr(y+1, x+1, msg,curses.color_pair(1))   #write message
+    
+def infoBox(stdscr,y,x,msg,title="infobox"):
+    dialogBox(stdscr,y,x,msg,title)
     stdscr.addstr(y+3, (x*2+len(msg))/2, "Ok",curses.color_pair(1))   #write ok
     stdscr.getkey() #wait any key
 
-def questBox(stdscr,y,x,msg,title="questbox"):
-    curses.textpad.rectangle(stdscr, y,x, y+4, len(msg)+x+1)    #draw message box
-    stdscr.addstr(y, x+1, title,curses.color_pair(1)) #set box title
-    stdscr.addstr(y+1, x+1, (" "*(len(msg))),curses.color_pair(1)) #set color for all box
-    stdscr.addstr(y+2, x+1, (" "*(len(msg))),curses.color_pair(1))
-    stdscr.addstr(y+3, x+1, (" "*(len(msg))),curses.color_pair(1))
-    stdscr.addstr(y+1, x+1, msg,curses.color_pair(1))   #write message
+def quitBox(stdscr,y,x,msg,title="quitbox"):
+    dialogBox(stdscr,y,x,msg,title)
     stdscr.addstr(y+3, ((x*2+len(msg))/2)-3, "Quit    No",curses.color_pair(1))   #write ok
     stdscr.addstr(y+3, ((x*2+len(msg))/2)-3, "Q",curses.color_pair(2))   #write ok
     stdscr.addstr(y+3, ((x*2+len(msg))/2)+5, "N",curses.color_pair(2))   #write ok
     while 1:
         digit = stdscr.getkey() #wait any key
         if digit == "q":
+            return 1
+        if digit == "n":
+            return 0
+            
+def saveBox(stdscr,y,x,msg,title="savebox"):
+    dialogBox(stdscr,y,x,msg,title)
+    stdscr.addstr(y+3, ((x*2+len(msg))/2)-3, "Yes    No",curses.color_pair(1))   #write ok
+    stdscr.addstr(y+3, ((x*2+len(msg))/2)-3, "Y",curses.color_pair(2))   #write ok
+    stdscr.addstr(y+3, ((x*2+len(msg))/2)+4, "N",curses.color_pair(2))   #write ok
+    while 1:
+        digit = stdscr.getkey() #wait any key
+        if digit == "y":
             return 1
         if digit == "n":
             return 0
