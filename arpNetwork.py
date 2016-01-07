@@ -8,7 +8,7 @@ class ArpNetwork():
         
         self.base_X = 1
         self.base_Y = 2
-        self.length_win = 85
+        self.length_win = 80
         self.stdscr = stdscr
         
 
@@ -58,11 +58,12 @@ class ArpNetwork():
         utils.drawBox(self.stdscr,self.base_Y,self.base_X+23,20,self.router_ip,"Router")
         self.stdscr.addstr(self.base_Y, self.base_X+24, "R",curses.color_pair(2))
         
-        curses.textpad.rectangle(self.stdscr, self.base_Y+4,self.base_X, self.base_Y+16, self.base_X+81)
-        self.stdscr.addstr(self.base_Y+4,self.base_X+2,"Network Monitor",curses.color_pair(1))
+        curses.textpad.rectangle(self.stdscr,
+            self.base_Y+4,self.base_X, self.base_Y+16, self.base_X+70)
+        self.stdscr.addstr(self.base_Y+4,self.base_X+1,"Network Monitor",curses.color_pair(1))
         y = self.base_Y+6
         for i in str(conf.route).split("\n"):
-            self.stdscr.addstr(y,3,i,curses.color_pair(1))
+            self.stdscr.addstr(y,self.base_X+3,i[:-15],curses.color_pair(1))
             y+=1
         #draw tabs navigator        
         utils.drawMenuBar(self.stdscr,self.length_win)

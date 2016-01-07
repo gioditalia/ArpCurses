@@ -27,7 +27,7 @@ class Main():
         """
         self.base_X = 1
         self.base_Y = 2
-        self.length_win = 85
+        self.length_win = 80
         self.stdscr = stdscr
         
         # Clear screen
@@ -74,8 +74,8 @@ class Main():
                 digit = network.main(victim,router)
             elif digit == "q":
                 tools.firewallBlockingConf(interface)
-                if utils.questBox(self.stdscr,6,15,
-                    "Do you really want to quit?",""):        
+                if utils.quitBox(self.stdscr,6,15,
+                    "Do you really want to quit?",""):
                     sys.exit(1)
                 else:
                     self.stdscr.clear()

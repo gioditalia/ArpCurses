@@ -10,7 +10,7 @@ class ArpScan():
     
         self.base_X = 1
         self.base_Y = 2
-        self.length_win = 85
+        self.length_win = 80
         self.stdscr = stdscr
         
         self.interface = interface #physical interface
@@ -80,18 +80,22 @@ class ArpScan():
         self.stdscr.clear()
         
         #draw textbox with label
-        utils.drawBox(self.stdscr,self.base_Y,self.base_X,20,self.victim_ip,"Victim")
+        utils.drawBox(self.stdscr,self.base_Y,self.base_X,20,
+            self.victim_ip,"Victim")
         self.stdscr.addstr(self.base_Y,self.base_X+1,"V",curses.color_pair(2))
     
-        utils.drawBox(self.stdscr,self.base_Y,self.base_X+23,20,self.router_ip,"Router")
+        utils.drawBox(self.stdscr,self.base_Y,self.base_X+23,20,
+            self.router_ip,"Router")
         self.stdscr.addstr(self.base_Y, self.base_X+24, "R",curses.color_pair(2))
         
-        utils.drawBox(self.stdscr,self.base_Y+4,self.base_X,20,self.network_CIDR,"Network(CIDR)")
+        utils.drawBox(self.stdscr,self.base_Y+4,self.base_X,20,
+            self.network_CIDR,"Network(CIDR)")
         self.stdscr.addstr(self.base_Y+4, self.base_X+1, "N",curses.color_pair(2))
                 
         utils.drawBox(self.stdscr,self.base_Y+4,self.base_X+23,20,self.interface,"iFace")
         
-        curses.textpad.rectangle(self.stdscr, self.base_Y+7,self.base_X, self.base_Y+16, self.base_X+70)
+        curses.textpad.rectangle(self.stdscr,
+            self.base_Y+7,self.base_X, self.base_Y+16, self.base_X+70)
         self.stdscr.addstr(self.base_Y+7,self.base_X+1,"Scan",curses.color_pair(1))
         self.stdscr.addstr(self.base_Y+7, self.base_X+1, "S",curses.color_pair(2))
         self.stdscr.addstr(self.base_Y+8,self.base_X+1,

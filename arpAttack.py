@@ -12,7 +12,7 @@ class ArpAttack():
         
         self.base_X = 1
         self.base_Y = 2
-        self.length_win = 85
+        self.length_win = 80
         self.stdscr = stdscr
         
         
@@ -94,6 +94,7 @@ class ArpAttack():
                             " Something going wrong, control your settings ","Error!")
             
     def __attack(self):
+        """Manage attack loop"""
         while self.attack_status: #stop thread when attack_status is FALSE
             self.arp_poison.attack()
             time.sleep(5)
@@ -112,7 +113,8 @@ class ArpAttack():
         utils.drawBox(self.stdscr,self.base_Y+4,self.base_X+23,20,self.interface,"iFace")
  
         #draw Start/Stop status box
-        curses.textpad.rectangle(self.stdscr, self.base_Y,self.base_X+45, self.base_Y+6, self.base_X+58)
+        curses.textpad.rectangle(self.stdscr,
+            self.base_Y,self.base_X+45, self.base_Y+6, self.base_X+58)
         self.stdscr.addstr(self.base_Y, self.base_X+45, "Start/Stop",curses.color_pair(1))
         self.stdscr.addstr(self.base_Y, self.base_X+45, "S",curses.color_pair(2))
 
@@ -132,13 +134,14 @@ class ArpAttack():
             self.stdscr.addstr(self.base_Y+11,0, "running attack...",curses.color_pair(3))
             
         #draw forwarding status box    
-        curses.textpad.rectangle(self.stdscr, self.base_Y+4,self.base_X, self.base_Y+6, self.base_X+20)
+        curses.textpad.rectangle(self.stdscr,
+            self.base_Y+4,self.base_X, self.base_Y+6, self.base_X+20)
         self.stdscr.addstr(self.base_Y+4, self.base_X+1, "ForwarDing",curses.color_pair(1))
         self.stdscr.addstr(self.base_Y+4, self.base_X+7, "D",curses.color_pair(2))
             
         if self.forward_status == False:
             self.stdscr.addstr(self.base_Y+5, self.base_X+1, "       Active      ",curses.color_pair(3))
-            self.stdscr.addstr(self.base_Y+12,0, "blocking packets...",curses.color_pair(2))  
+            self.stdscr.addstr(self.base_Y+12,0, "blocking packets...",curses.color_pair(2))              
         else:
             self.stdscr.addstr(self.base_Y+5, self.base_X+1, "     Deactive      ",curses.color_pair(2))
             self.stdscr.addstr(self.base_Y+12,0, "forwarding packets...",curses.color_pair(3))  
