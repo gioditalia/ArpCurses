@@ -47,7 +47,7 @@ class ArpAttack():
             if digit == "v":    #set victim ip
                 try:
                     self.victim_ip = victim.edit().split(" ")[0] #remove empty
-                    self.arp_poison.setVictim(self.victim_ip)         #space on strings
+                    self.arp_poison.setVictim(self.victim_ip)    #space on strings
                 except:
                     utils.infoBox(self.stdscr,self.base_Y+1,self.base_X+10,
                             " Invalid victim IP ","Error!")
@@ -78,8 +78,11 @@ class ArpAttack():
                             t.start()
                         except:
                             self.attack_status = False
-                            utils.infoBox(self.stdscr,self.base_Y+1,self.base_X+1,
-                                " Something going wrong, control your settings ","Error!")
+                            utils.infoBox(self.stdscr,
+                                self.base_Y+1,self.base_X+1,
+                                " Something going wrong, \
+                                control your settings ",
+                                "Error!")
     
             if digit == "d":    #forward/block connections
                 try:
@@ -91,7 +94,8 @@ class ArpAttack():
                 except:
                         self.forward_status = not self.forward_status
                         utils.infoBox(self.stdscr,self.base_Y+1,self.base_X+1,
-                            " Something going wrong, control your settings ","Error!")
+                            " Something going wrong, control your settings ",
+                            "Error!")
             
     def __attack(self):
         """Manage attack loop"""
@@ -104,47 +108,72 @@ class ArpAttack():
         self.stdscr.clear()
 
         #draw textbox with label
-        utils.drawBox(self.stdscr,self.base_Y,self.base_X,20,self.victim_ip,"Victim")
-        self.stdscr.addstr(self.base_Y,self.base_X+1,"V",curses.color_pair(2))
+        utils.drawBox(self.stdscr,self.base_Y,self.base_X,20,self.victim_ip,
+            "Victim")
+        self.stdscr.addstr(self.base_Y,self.base_X+1,"V",
+            curses.color_pair(2))
     
-        utils.drawBox(self.stdscr,self.base_Y,self.base_X+23,20,self.router_ip,"Router")
-        self.stdscr.addstr(self.base_Y, self.base_X+24, "R",curses.color_pair(2))
+        utils.drawBox(self.stdscr,self.base_Y,self.base_X+23,20,self.router_ip,
+            "Router")
+        self.stdscr.addstr(self.base_Y, self.base_X+24, "R",
+            curses.color_pair(2))
             
-        utils.drawBox(self.stdscr,self.base_Y+4,self.base_X+23,20,self.interface,"iFace")
+        utils.drawBox(self.stdscr,self.base_Y+4,self.base_X+23,20,
+            self.interface,"iFace")
  
         #draw Start/Stop status box
         curses.textpad.rectangle(self.stdscr,
             self.base_Y,self.base_X+45, self.base_Y+6, self.base_X+58)
-        self.stdscr.addstr(self.base_Y, self.base_X+45, "Start/Stop",curses.color_pair(1))
-        self.stdscr.addstr(self.base_Y, self.base_X+45, "S",curses.color_pair(2))
+        self.stdscr.addstr(self.base_Y, self.base_X+45, "Start/Stop",
+            curses.color_pair(1))
+        self.stdscr.addstr(self.base_Y, self.base_X+45, "S",
+            curses.color_pair(2))
 
         if self.attack_status == False:
-            self.stdscr.addstr(self.base_Y+1, self.base_X+46, "            ",curses.color_pair(3))
-            self.stdscr.addstr(self.base_Y+2, self.base_X+46, "   START    ",curses.color_pair(3))
-            self.stdscr.addstr(self.base_Y+3, self.base_X+46, "   ATTACK   ",curses.color_pair(3))
-            self.stdscr.addstr(self.base_Y+4, self.base_X+46, "            ",curses.color_pair(3))
-            self.stdscr.addstr(self.base_Y+5, self.base_X+46, "            ",curses.color_pair(3))
-            self.stdscr.addstr(self.base_Y+11,0, "attack stopped...",curses.color_pair(2))
+            self.stdscr.addstr(self.base_Y+1, self.base_X+46, "            ",
+                curses.color_pair(3))
+            self.stdscr.addstr(self.base_Y+2, self.base_X+46, "   START    ",
+                curses.color_pair(3))
+            self.stdscr.addstr(self.base_Y+3, self.base_X+46, "   ATTACK   ",
+                curses.color_pair(3))
+            self.stdscr.addstr(self.base_Y+4, self.base_X+46, "            ",
+                curses.color_pair(3))
+            self.stdscr.addstr(self.base_Y+5, self.base_X+46, "            ",
+                curses.color_pair(3))
+            self.stdscr.addstr(self.base_Y+11,0, "attack stopped...",
+                curses.color_pair(2))
         else:
-            self.stdscr.addstr(self.base_Y+1, self.base_X+46, "            ",curses.color_pair(2))
-            self.stdscr.addstr(self.base_Y+2, self.base_X+46, "    STOP    ",curses.color_pair(2))
-            self.stdscr.addstr(self.base_Y+3, self.base_X+46, "   ATTACK   ",curses.color_pair(2))
-            self.stdscr.addstr(self.base_Y+4, self.base_X+46, "            ",curses.color_pair(2))
-            self.stdscr.addstr(self.base_Y+5, self.base_X+46, "            ",curses.color_pair(2))
-            self.stdscr.addstr(self.base_Y+11,0, "running attack...",curses.color_pair(3))
+            self.stdscr.addstr(self.base_Y+1, self.base_X+46, "            ",
+                curses.color_pair(2))
+            self.stdscr.addstr(self.base_Y+2, self.base_X+46, "    STOP    ",
+                curses.color_pair(2))
+            self.stdscr.addstr(self.base_Y+3, self.base_X+46, "   ATTACK   ",
+                curses.color_pair(2))
+            self.stdscr.addstr(self.base_Y+4, self.base_X+46, "            ",
+                curses.color_pair(2))
+            self.stdscr.addstr(self.base_Y+5, self.base_X+46, "            ",
+                curses.color_pair(2))
+            self.stdscr.addstr(self.base_Y+11,0, "running attack...",
+                curses.color_pair(3))
             
         #draw forwarding status box    
         curses.textpad.rectangle(self.stdscr,
             self.base_Y+4,self.base_X, self.base_Y+6, self.base_X+20)
-        self.stdscr.addstr(self.base_Y+4, self.base_X+1, "ForwarDing",curses.color_pair(1))
-        self.stdscr.addstr(self.base_Y+4, self.base_X+7, "D",curses.color_pair(2))
+        self.stdscr.addstr(self.base_Y+4, self.base_X+1, "ForwarDing",
+            curses.color_pair(1))
+        self.stdscr.addstr(self.base_Y+4, self.base_X+7, "D",
+            curses.color_pair(2))
             
         if self.forward_status == False:
-            self.stdscr.addstr(self.base_Y+5, self.base_X+1, "       Active      ",curses.color_pair(3))
-            self.stdscr.addstr(self.base_Y+12,0, "blocking packets...",curses.color_pair(2))              
+            self.stdscr.addstr(self.base_Y+5, self.base_X+1,
+                "       Active      ",curses.color_pair(3))
+            self.stdscr.addstr(self.base_Y+12,0,
+                "blocking packets...",curses.color_pair(2))              
         else:
-            self.stdscr.addstr(self.base_Y+5, self.base_X+1, "     Deactive      ",curses.color_pair(2))
-            self.stdscr.addstr(self.base_Y+12,0, "forwarding packets...",curses.color_pair(3))  
+            self.stdscr.addstr(self.base_Y+5, self.base_X+1,
+                "     Deactive      ",curses.color_pair(2))
+            self.stdscr.addstr(self.base_Y+12,0,
+                "forwarding packets...",curses.color_pair(3))  
             
         #draw status info at the bottom of the tab
         self.stdscr.addstr(self.base_Y+10, 0, "Status:")

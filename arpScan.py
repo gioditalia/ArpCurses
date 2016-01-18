@@ -71,7 +71,8 @@ class ArpScan():
                     
                     except:
                         utils.infoBox(self.stdscr,self.base_Y+1,self.base_X+10,
-                                " Something going wrong, control your settings ","Error!")
+                            " Something going wrong, control your settings ",
+                            "Error!")
             
             
             
@@ -86,18 +87,23 @@ class ArpScan():
     
         utils.drawBox(self.stdscr,self.base_Y,self.base_X+23,20,
             self.router_ip,"Router")
-        self.stdscr.addstr(self.base_Y, self.base_X+24, "R",curses.color_pair(2))
+        self.stdscr.addstr(self.base_Y, self.base_X+24, "R",
+            curses.color_pair(2))
         
         utils.drawBox(self.stdscr,self.base_Y+4,self.base_X,20,
             self.network_CIDR,"Network(CIDR)")
-        self.stdscr.addstr(self.base_Y+4, self.base_X+1, "N",curses.color_pair(2))
+        self.stdscr.addstr(self.base_Y+4, self.base_X+1, "N",
+            curses.color_pair(2))
                 
-        utils.drawBox(self.stdscr,self.base_Y+4,self.base_X+23,20,self.interface,"iFace")
+        utils.drawBox(self.stdscr,self.base_Y+4,self.base_X+23,20,
+            self.interface,"iFace")
         
         curses.textpad.rectangle(self.stdscr,
             self.base_Y+7,self.base_X, self.base_Y+16, self.base_X+70)
-        self.stdscr.addstr(self.base_Y+7,self.base_X+1,"Scan",curses.color_pair(1))
-        self.stdscr.addstr(self.base_Y+7, self.base_X+1, "S",curses.color_pair(2))
+        self.stdscr.addstr(self.base_Y+7,self.base_X+1,"Scan",
+            curses.color_pair(1))
+        self.stdscr.addstr(self.base_Y+7, self.base_X+1, "S",
+            curses.color_pair(2))
         self.stdscr.addstr(self.base_Y+8,self.base_X+1,
         " Mac Address               Ip Address       Hostname",
         curses.color_pair(1))

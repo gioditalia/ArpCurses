@@ -46,7 +46,7 @@ class Main():
         router = utils.makeTextBox(self.base_Y,self.base_X+23,16)
 
         #select interface for this session
-        interface = self.__drawSelectInterface() #not use self.interface for consistency with victim and router?
+        interface = self.__drawSelectInterface()
         
         self.stdscr.clear()
         
@@ -88,8 +88,10 @@ class Main():
     def __drawSelectInterface(self):
         iface = utils.makeTextBox(7,20,10)
         while 1:
-            self.stdscr.addstr(0, 0, (" "*self.length_win),curses.color_pair(2))
-            self.stdscr.addstr(0, 0, "Please set your network interface",curses.color_pair(2))
+            self.stdscr.addstr(0, 0, (" "*self.length_win),
+                curses.color_pair(2))
+            self.stdscr.addstr(0, 0, "Please set your network interface",
+                curses.color_pair(2))
             utils.drawTitle(self.stdscr,1,10)
             utils.drawBox(self.stdscr,7,20,20,"","iFace")    
             try:
