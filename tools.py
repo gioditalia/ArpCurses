@@ -1,4 +1,6 @@
 import socket
+import platform
+import os
 from scapy.layers.l2 import arping
 
 def firewallForwardConf(iface):
@@ -8,13 +10,19 @@ def firewallForwardConf(iface):
     iface -- the network interface
     """
     #write appropriate kernel config settings
-    f = open("/proc/sys/net/ipv4/ip_forward", "w")
-    f.write('1')
-    f.close()
-    f = open("/proc/sys/net/ipv4/conf/" + iface + "/send_redirects", "w")
-    f.write('0')
-    f.close()
-
+    os_name = platform.system()
+    if os_name == "Linux":
+        f = open("a","w").write(os_name)
+        f = open("/proc/sys/net/ipv4/ip_forward", "w")
+        f.write('1')
+        f.close()
+        f = open("/proc/sys/net/ipv4/conf/" + iface + "/send_redirects", "w")
+        f.write('0')
+        f.close()
+    elif os_name == "Darwin":
+        os.system("sysctl -w net.inet.ip.forwarding=1")
+        os.system("sysctl -n net.inet.ip.fw.enable=0")
+        
 def firewallBlockingConf(iface):
     """Block any connection 
   
@@ -22,12 +30,17 @@ def firewallBlockingConf(iface):
     iface -- the network interface
     """
     #write appropriate kernel config settings
-    f = open("/proc/sys/net/ipv4/ip_forward", "w")
-    f.write('0')
-    f.close()
-    f = open("/proc/sys/net/ipv4/conf/" + iface + "/send_redirects", "w")
-    f.write('1')
-    f.close()
+    os_name = platform.system()
+    if os_name == "Linux":
+        f = open("/proc/sys/net/ipv4/ip_forward", "w")
+        f.write('0')
+        f.close()
+        f = open("/proc/sys/net/ipv4/conf/" + iface + "/send_redirects", "w")
+        f.write('1')
+        f.close()
+    elif os_name == "Darwin":
+        os.system("sysctl -w net.inet.ip.forwarding=0")
+        os.system("sysctl -n net.inet.ip.fw.enable=1")
 
 
 
