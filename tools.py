@@ -1,3 +1,20 @@
+"""
+    ArpCurses v1.0 - The ArpPoisoning tool. 
+    Copyright (C) 2016  Giovanni D'Italia
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+"""
+
 import socket
 import platform
 import os
@@ -12,7 +29,6 @@ def firewallForwardConf(iface):
     #write appropriate kernel config settings
     os_name = platform.system()
     if os_name == "Linux":
-        f = open("a","w").write(os_name)
         f = open("/proc/sys/net/ipv4/ip_forward", "w")
         f.write('1')
         f.close()

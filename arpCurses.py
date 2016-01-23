@@ -1,4 +1,20 @@
-# -*- coding: utf-8 -*-
+"""
+    ArpCurses v1.0 - The ArpPoisoning tool. 
+    Copyright (C) 2016  Giovanni D'Italia
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+"""
+
 import poison
 import tools
 import curses
@@ -30,6 +46,12 @@ class Main():
         self.length_win = 80
         self.stdscr = stdscr
         
+        #copyright string
+        self.GPLv3 = "ArpCurses Copyright (C) 2016  Giovanni D'Italia\n"\
+        +"This program comes with ABSOLUTELY NO WARRANTY.\n"\
+        +"This is free software, and you are welcome to redistribute it,\n"\
+        +"under certain conditions."
+        
         # Clear screen
         self.stdscr.clear()
         
@@ -58,8 +80,7 @@ class Main():
         #future features
         sniff = arpSniff.ArpSniff(self.stdscr,interface)
         
-        utils.drawMenuBar(self.stdscr,self.length_win)
-        utils.drawTitle(self.stdscr,1,10)
+        self.__drawTabContent()
         digit = self.stdscr.getkey()
         
         while 1:
@@ -73,14 +94,12 @@ class Main():
                 stdscr.clear()
                 digit = network.main(victim,router)
             elif digit == "q":
-                tools.firewallBlockingConf(interface)
                 if utils.quitBox(self.stdscr,6,15,
                     "Do you really want to quit?",""):
+                    tools.firewallBlockingConf(interface)
                     sys.exit(1)
                 else:
-                    self.stdscr.clear()
-                    utils.drawMenuBar(self.stdscr,self.length_win)
-                    utils.drawTitle(self.stdscr,1,10)
+                    self.__drawTabContent()
                     digit = self.stdscr.getkey()
             else:
                 digit = self.stdscr.getkey()
@@ -103,6 +122,13 @@ class Main():
                     " Error to set interface ","Error!")
             self.stdscr.clear()
         return interface
+    
+    def __drawTabContent(self):
+        self.stdscr.clear()
+        utils.drawMenuBar(self.stdscr,self.length_win)
+        utils.drawTitle(self.stdscr,1,10)
+        self.stdscr.addstr(8, 0, self.GPLv3,curses.color_pair(1))
+        self.stdscr.refresh()
 
 if __name__ == "__main__":
        Main()
