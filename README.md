@@ -4,13 +4,13 @@
 
 #####How to launch from source
   1. Install python-scapy.
-  2.   ```sudo python main.py```
+  2. ```sudo python main.py```
 
 #####How to freeze packages("compile")
   1. Install python-scapy.
   2. Install pyInstaller.
-  3.  ```pyinstaller -F main.py ```
-  4.  ```sudo ./dist/main```
+  3. ```pyinstaller -F main.py ```
+  4. You can find your executable in *dist* dir
 
 #####Compatibility
   1. GNU/Linux
