@@ -137,7 +137,7 @@ class ArpAttack():
             
         utils.drawBox(self.stdscr,self.base_Y+4,self.base_X+23,20,
             self.interface,"iFace")
- 
+
         #draw Start/Stop status box
         curses.textpad.rectangle(self.stdscr,
             self.base_Y,self.base_X+45, self.base_Y+6, self.base_X+58)

@@ -26,6 +26,7 @@ import arpNetwork
 import arpSniff
 import utils
 import curses.textpad
+from scapy.route import *
 
 
 class Main():
@@ -106,17 +107,22 @@ class Main():
                 
     def __drawSelectInterface(self):
         iface = utils.makeTextBox(7,20,10)
+        interface = ""
         while 1:
             self.stdscr.addstr(0, 0, (" "*self.length_win),
                 curses.color_pair(2))
             self.stdscr.addstr(0, 0, "Please set your network interface",
                 curses.color_pair(2))
             utils.drawTitle(self.stdscr,1,10)
-            utils.drawBox(self.stdscr,7,20,20,"","iFace")    
+            utils.drawBox(self.stdscr,7,20,20,interface,"iFace")
             try:
                 interface = iface.edit().strip()
-                tools.firewallBlockingConf(interface)
-                break
+                if interface == conf.iface:
+                    tools.firewallBlockingConf(interface)
+                    break
+                else:
+                    utils.infoBox(self.stdscr,6,15,
+                        " Interface not found ","Error!")
             except:
                 utils.infoBox(self.stdscr,6,15,
                     " Error to set interface ","Error!")
