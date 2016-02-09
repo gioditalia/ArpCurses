@@ -44,10 +44,10 @@ class ArpSniff():
         
     def main(self,victim,router):
 
-        self.victim_ip = victim.gather().split(" ")[0] #victim address
-        self.router_ip = router.gather().split(" ")[0] #router address
+        self.victim_ip = victim.gather().strip() #victim address
+        self.router_ip = router.gather().strip() #router address
         self.tab_status = True #enable write sniff packets
-     
+
         while 1:
             self.__drawTabContent()
             
@@ -61,7 +61,7 @@ class ArpSniff():
             
             if digit == "v":    #set victim ip
                 try:
-                    self.victim_ip = victim.edit().split(" ")[0] #remove empty
+                    self.victim_ip = victim.edit().strip() #remove empty
                 except:
                     utils.infoBox(self.stdscr,self.base_Y+1,self.base_X+10,
                             " Invalid victim IP ","Error!")
@@ -69,7 +69,7 @@ class ArpSniff():
 
             if digit == "r":    #set router ip
                 try:
-                    self.router_ip = router.edit().split(" ")[0]
+                    self.router_ip = router.edit().strip()
                 except:
                     utils.infoBox(self.stdscr,self.base_Y+1,self.base_X+10,
                             " Invalid router IP ","Error!")
@@ -96,9 +96,9 @@ class ArpSniff():
                         if utils.saveBox(self.stdscr,6,15,
                             "Save sniffed packets in .cap file?",""):
                             self.__save()
-              
+
             if digit == "d":
-                self.savingdir = self.savedir.edit().split(" ")[0]
+                self.savingdir = self.savedir.edit().strip()
                 if not self.savingdir[len(self.savingdir)-1] == "/":
                     self.savingdir= "%s/" %(self.savingdir)
                 self.savingdir_show = self.savingdir

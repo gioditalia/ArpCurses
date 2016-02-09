@@ -43,10 +43,10 @@ class ArpAttack():
         
     def main(self,victim,router):
         
-        self.victim_ip = victim.gather().split(" ")[0] #victim address
+        self.victim_ip = victim.gather().strip() #victim address
         if self.victim_ip != "":
             self.arp_poison.setVictim(self.victim_ip)
-        self.router_ip = router.gather().split(" ")[0] #router address
+        self.router_ip = router.gather().strip() #router address
         if self.router_ip != "":
             self.arp_poison.setRouter(self.router_ip)
 
@@ -63,7 +63,7 @@ class ArpAttack():
             #attack menu
             if digit == "v":    #set victim ip
                 try:
-                    self.victim_ip = victim.edit().split(" ")[0] #remove empty
+                    self.victim_ip = victim.edit().strip() #remove empty
                     self.arp_poison.setVictim(self.victim_ip)    #space on strings
                 except:
                     utils.infoBox(self.stdscr,self.base_Y+1,self.base_X+10,
@@ -72,7 +72,7 @@ class ArpAttack():
 
             if digit == "r":    #set router ip
                 try:
-                    self.router_ip = router.edit().split(" ")[0]
+                    self.router_ip = router.edit().strip()
                     self.arp_poison.setRouter(self.router_ip)
                 except:
                     utils.infoBox(self.stdscr,self.base_Y+1,self.base_X+10,

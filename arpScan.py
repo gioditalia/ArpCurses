@@ -42,8 +42,8 @@ class ArpScan():
         
     def main(self,victim,router):
     
-        self.victim_ip = victim.gather().split(" ")[0] #victim address
-        self.router_ip = router.gather().split(" ")[0] #router address
+        self.victim_ip = victim.gather().strip() #victim address
+        self.router_ip = router.gather().strip() #router address
 
         while 1:
             self.__drawTabContent()
@@ -58,7 +58,7 @@ class ArpScan():
             #victim/router ip set menu
             if digit == "v":    #set victim ip
                 try:
-                    self.victim_ip = victim.edit().split(" ")[0]
+                    self.victim_ip = victim.edit().strip()
                 except:
                     utils.infoBox(self.stdscr,self.base_Y+1,self.base_X+10,
                             " Invalid victim IP ","Error!")
@@ -66,7 +66,7 @@ class ArpScan():
 
             if digit == "r":    #set router ip
                 try:
-                    self.router_ip = router.edit().split(" ")[0]
+                    self.router_ip = router.edit().strip()
                 except:
                     utils.infoBox(self.stdscr,self.base_Y+1,self.base_X+10,
                             " Invalid router IP ","Error!")
@@ -75,7 +75,7 @@ class ArpScan():
             #scanner menu 
             if digit == "n":    #set router ip
                 try:
-                    self.network_CIDR = self.network.edit().split(" ")[0]
+                    self.network_CIDR = self.network.edit().strip()
                 except:
                     utils.infoBox(self.stdscr,self.base_Y+1,self.base_X+10,
                             " Invalid router IP ","Error!")

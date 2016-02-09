@@ -114,7 +114,7 @@ class Main():
             utils.drawTitle(self.stdscr,1,10)
             utils.drawBox(self.stdscr,7,20,20,"","iFace")    
             try:
-                interface = iface.edit().split(" ")[0]
+                interface = iface.edit().strip()
                 tools.firewallBlockingConf(interface)
                 break
             except:
