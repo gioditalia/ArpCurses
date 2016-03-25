@@ -13,5 +13,4 @@
   4. You can find your executable in *dist* dir
 
 #####Compatibility
-  1. GNU/Linux
-  2. OsX
+  1. GNU/Linux ~~(IPTABLES required)~~
