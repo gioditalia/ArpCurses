@@ -26,18 +26,12 @@ def firewallForwardConf(iface):
     Keyword arguments:
     iface -- the network interface
     """
-    #write appropriate kernel config settings
-    os_name = platform.system()
-    if os_name == "Linux":
-        f = open("/proc/sys/net/ipv4/ip_forward", "w")
-        f.write('1')
-        f.close()
-        f = open("/proc/sys/net/ipv4/conf/" + iface + "/send_redirects", "w")
-        f.write('0')
-        f.close()
-    elif os_name == "Darwin":
-        os.system("sysctl -w net.inet.ip.forwarding=1")
-        os.system("sysctl -n net.inet.ip.fw.enable=0")
+    f = open("/proc/sys/net/ipv4/ip_forward", "w")
+    f.write('1')
+    f.close()
+    f = open("/proc/sys/net/ipv4/conf/" + iface + "/send_redirects", "w")
+    f.write('0')
+    f.close()
         
 def firewallBlockingConf(iface):
     """Block any connection 
@@ -45,18 +39,12 @@ def firewallBlockingConf(iface):
     Keyword arguments:
     iface -- the network interface
     """
-    #write appropriate kernel config settings
-    os_name = platform.system()
-    if os_name == "Linux":
-        f = open("/proc/sys/net/ipv4/ip_forward", "w")
-        f.write('0')
-        f.close()
-        f = open("/proc/sys/net/ipv4/conf/" + iface + "/send_redirects", "w")
-        f.write('1')
-        f.close()
-    elif os_name == "Darwin":
-        os.system("sysctl -w net.inet.ip.forwarding=0")
-        os.system("sysctl -n net.inet.ip.fw.enable=1")
+    f = open("/proc/sys/net/ipv4/ip_forward", "w")
+    f.write('0')
+    f.close()
+    f = open("/proc/sys/net/ipv4/conf/" + iface + "/send_redirects", "w")
+    f.write('1')
+    f.close()
 
 
 
