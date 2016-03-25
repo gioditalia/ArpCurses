@@ -29,37 +29,35 @@ import curses.textpad
 from scapy.route import *
 
 
-class Main():
+class ArpCurses():
 
     def __init__(self):
-        print "execute in curses mode..."
-        for i in range(0,2):
-            time.sleep(1)
-        curses.wrapper(self.main)
-
-    def main(self,stdscr):
         """
-        Set global variables ,colors and launch 
-        the curses's tabs
+        Set global variables ,colors and
         """
         self.base_X = 1
         self.base_Y = 2
         self.length_win = 80
-        self.stdscr = stdscr
-        
         #copyright string
         self.GPLv3 = "ArpCurses Copyright (C) 2016  Giovanni D'Italia\n"\
         +"This program comes with ABSOLUTELY NO WARRANTY.\n"\
         +"This is free software, and you are welcome to redistribute it,\n"\
         +"under certain conditions."
-        
-        # Clear screen
-        self.stdscr.clear()
-        
         #set colors
         curses.init_pair(1,curses.COLOR_RED,curses.COLOR_WHITE)
         curses.init_pair(2,curses.COLOR_WHITE,curses.COLOR_RED)
         curses.init_pair(3,curses.COLOR_WHITE,curses.COLOR_GREEN)
+        #launch curses.wrapper
+        curses.wrapper(self.main)
+
+    def main(self,stdscr):
+        """
+        launch the curses's tabs
+        """
+        self.stdscr = stdscr
+        
+        # Clear screen
+        self.stdscr.clear()
         
         #set background
         self.stdscr.bkgd('\t',curses.color_pair(1))
@@ -137,4 +135,4 @@ class Main():
         self.stdscr.refresh()
 
 if __name__ == "__main__":
-       Main()
+       ArpCurses()
