@@ -46,9 +46,23 @@ def firewallBlockingConf(iface):
     f.write('1')
     f.close()
 
-
-
-
+def enableIptables(iface,ports,host):
+    os.system("/sbin/iptables --flush")
+    os.system("/sbin/iptables -t nat --flush")
+    os.system("/sbin/iptables --zero")
+    os.system("/sbin/iptables -A FORWARD --in-interface " +
+     iface + " -j ACCEPT")
+    os.system("/sbin/iptables -t nat --append POSTROUTING --out-interface " +
+     iface + " -j MASQUERADE")
+    #forward 80,443 to our proxy
+    for port in ports:
+        os.system("/sbin/iptables -t nat -A PREROUTING -p tcp --dport " +
+         port + " --jump DNAT --to-destination" + host)
+    
+def disableIptables():
+    os.system("/sbin/iptables --flush")
+    os.system("/sbin/iptables -t nat --flush")
+    os.system("/sbin/iptables --zero")
 
 def scan(net,iface="eth0",timeout=1,verbose=0):
     """Scan a network.
