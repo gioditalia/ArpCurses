@@ -37,7 +37,10 @@ class ArpAttack():
         self.interface = interface #physical interface
         self.attack_status = False #attack status
         self.forward_status = False #forward status
-        
+        self.to_proxy_status = False # send to proxy status
+        self.ports = ""
+        self.ports_show = ""
+        self.ports_list = utils.makeTextBox(self.base_Y+8,self.base_X+23,100)
         #init poison module
         self.arp_poison=poison.ArpPoison(iface=self.interface)
         
@@ -114,12 +117,44 @@ class ArpAttack():
                             " Something going wrong, control your settings ",
                             "Error!")
             
+            if digit == "x":    #send/block packet to proxy
+                #try:
+                    self.to_proxy_status = not self.to_proxy_status
+                    if self.to_proxy_status:
+                        tools.enableIptables(self.interface,self.ports.split(","),"127.0.0.1")
+                    else:
+                        tools.disableIptables()
+                #except:
+                #    utils.infoBox(self.stdscr,self.base_Y+1,self.base_X+1,
+                #            " Something going wrong, control your settings ",
+                #            "Error!")
+            if digit == "p":    #set ports list
+                try:
+                    
+                    self.__drawPorts()
+                    self.ports = self.ports_list.edit().strip()
+                    self.ports_show = self.ports
+                    if len(self.ports_show) > 18:
+                        self.ports_show ="[%s...%s]" \
+                        %(self.ports_show[:5],self.ports_show[-5:])
+                except:
+                    utils.infoBox(self.stdscr,self.base_Y+1,self.base_X+10,
+                        " Invalid ports list ","Error!")
+                    self.ports = ""
+                    
     def __attack(self):
         """Manage attack loop"""
         while self.attack_status: #stop thread when attack_status is FALSE
             self.arp_poison.attack()
             time.sleep(5)
             
+    def __drawPorts(self):
+        utils.drawBox(self.stdscr,self.base_Y+8,self.base_X+23,20,self.ports,
+            "Ports")
+        self.stdscr.addstr(self.base_Y+8, self.base_X+24, "P",
+            curses.color_pair(2))
+        self.stdscr.refresh()
+                
     def __drawTabContent(self):
         #clear screen
         self.stdscr.clear()
@@ -137,6 +172,11 @@ class ArpAttack():
             
         utils.drawBox(self.stdscr,self.base_Y+4,self.base_X+23,20,
             self.interface,"iFace")
+            
+        utils.drawBox(self.stdscr,self.base_Y+8,self.base_X+23,20,self.ports_show,
+            "Ports")
+        self.stdscr.addstr(self.base_Y+8, self.base_X+24, "P",
+            curses.color_pair(2))
 
         #draw Start/Stop status box
         curses.textpad.rectangle(self.stdscr,
@@ -157,7 +197,7 @@ class ArpAttack():
                 curses.color_pair(3))
             self.stdscr.addstr(self.base_Y+5, self.base_X+46, "            ",
                 curses.color_pair(3))
-            self.stdscr.addstr(self.base_Y+11,0, "attack stopped...",
+            self.stdscr.addstr(self.base_Y+12,0, "attack stopped...",
                 curses.color_pair(2))
         else:
             self.stdscr.addstr(self.base_Y+1, self.base_X+46, "            ",
@@ -170,7 +210,7 @@ class ArpAttack():
                 curses.color_pair(2))
             self.stdscr.addstr(self.base_Y+5, self.base_X+46, "            ",
                 curses.color_pair(2))
-            self.stdscr.addstr(self.base_Y+11,0, "running attack...",
+            self.stdscr.addstr(self.base_Y+12,0, "running attack...",
                 curses.color_pair(3))
             
         #draw forwarding status box    
@@ -184,16 +224,35 @@ class ArpAttack():
         if self.forward_status == False:
             self.stdscr.addstr(self.base_Y+5, self.base_X+1,
                 "       Active      ",curses.color_pair(3))
-            self.stdscr.addstr(self.base_Y+12,0,
+            self.stdscr.addstr(self.base_Y+13,0,
                 "blocking packets...",curses.color_pair(2))              
         else:
             self.stdscr.addstr(self.base_Y+5, self.base_X+1,
                 "     Deactive      ",curses.color_pair(2))
-            self.stdscr.addstr(self.base_Y+12,0,
-                "forwarding packets...",curses.color_pair(3))  
+            self.stdscr.addstr(self.base_Y+13,0,
+                "forwarding packets...",curses.color_pair(3))
+        
+        #draw iptables status box        
+        curses.textpad.rectangle(self.stdscr,
+            self.base_Y+8,self.base_X, self.base_Y+10, self.base_X+20)
+        self.stdscr.addstr(self.base_Y+8, self.base_X+1, "Forward to proxy",
+            curses.color_pair(1))
+        self.stdscr.addstr(self.base_Y+8, self.base_X+15, "x",
+            curses.color_pair(2))
+                    
+        if self.to_proxy_status == False:
+            self.stdscr.addstr(self.base_Y+9, self.base_X+1,
+                "       Active      ",curses.color_pair(3))
+            #self.stdscr.addstr(self.base_Y+13,0,
+            #    "blocking packets...",curses.color_pair(2))              
+        else:
+            self.stdscr.addstr(self.base_Y+9, self.base_X+1,
+                "     Deactive      ",curses.color_pair(2))
+            #self.stdscr.addstr(self.base_Y+13,0,
+            #    "forwarding packets...",curses.color_pair(3))  
             
         #draw status info at the bottom of the tab
-        self.stdscr.addstr(self.base_Y+10, 0, "Status:")
+        self.stdscr.addstr(self.base_Y+11, 0, "Status:")
 
         #draw tabs navigator        
         utils.drawMenuBar(self.stdscr,self.length_win)

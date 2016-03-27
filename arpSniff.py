@@ -98,6 +98,7 @@ class ArpSniff():
                             self.__save()
 
             if digit == "d":
+                self.__drawSaveDir()
                 self.savingdir = self.savedir.edit().strip()
                 if not self.savingdir[len(self.savingdir)-1] == "/":
                     self.savingdir= "%s/" %(self.savingdir)
@@ -143,7 +144,12 @@ class ArpSniff():
                         self.pkt[(len(self.pkt)-1)-i].summary(),
                             curses.color_pair(1))
             self.stdscr.refresh()                
-                
+    def __drawSaveDir(self):
+        utils.drawBox(self.stdscr,self.base_Y,self.base_X+46,32,
+            self.savingdir,"Saving directory")
+        self.stdscr.addstr(self.base_Y,self.base_X+54,"D",curses.color_pair(2))
+        self.stdscr.refresh()
+        
     def __drawTabContent(self):
         #clear screen
         self.stdscr.clear()
