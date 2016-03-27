@@ -57,7 +57,8 @@ def enableIptables(iface,ports,host):
     #forward 80,443 to our proxy
     for port in ports:
         os.system("/sbin/iptables -t nat -A PREROUTING -p tcp --dport " +
-         port + " --jump DNAT --to-destination" + host)
+         port + " --jump DNAT --to-destination " + host)
+        open("/home/inna/ciao","a").write(port)
     
 def disableIptables():
     os.system("/sbin/iptables --flush")
