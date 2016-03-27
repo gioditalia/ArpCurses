@@ -43,10 +43,6 @@ class ArpCurses():
         +"This program comes with ABSOLUTELY NO WARRANTY.\n"\
         +"This is free software, and you are welcome to redistribute it,\n"\
         +"under certain conditions."
-        #set colors
-        curses.init_pair(1,curses.COLOR_RED,curses.COLOR_WHITE)
-        curses.init_pair(2,curses.COLOR_WHITE,curses.COLOR_RED)
-        curses.init_pair(3,curses.COLOR_WHITE,curses.COLOR_GREEN)
         #launch curses.wrapper
         curses.wrapper(self.main)
 
@@ -55,7 +51,10 @@ class ArpCurses():
         launch the curses's tabs
         """
         self.stdscr = stdscr
-        
+        #set colors
+        curses.init_pair(1,curses.COLOR_RED,curses.COLOR_WHITE)
+        curses.init_pair(2,curses.COLOR_WHITE,curses.COLOR_RED)
+        curses.init_pair(3,curses.COLOR_WHITE,curses.COLOR_GREEN)
         # Clear screen
         self.stdscr.clear()
         
