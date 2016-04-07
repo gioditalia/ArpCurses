@@ -58,8 +58,7 @@ def enableIptables(iface,ports,host):
     for port in ports:
         os.system("/sbin/iptables -t nat -A PREROUTING -p tcp --dport " +
          port + " --jump DNAT --to-destination " + host)
-        open("/home/inna/ciao","a").write(port)
-    
+
 def disableIptables():
     os.system("/sbin/iptables --flush")
     os.system("/sbin/iptables -t nat --flush")
