@@ -1,5 +1,5 @@
 """
-    ArpCurses v1.0 - The ArpPoisoning tool. 
+    ArpCurses v1.0 - The ArpPoisoning tool.
     Copyright (C) 2016  Giovanni D'Italia
 
     This program is free software: you can redistribute it and/or modify
@@ -57,7 +57,7 @@ class ArpCurses():
         curses.init_pair(3,curses.COLOR_WHITE,curses.COLOR_GREEN)
         # Clear screen
         self.stdscr.clear()
-        
+
         #set background
         self.stdscr.bkgd('\t',curses.color_pair(1))
 
@@ -65,22 +65,19 @@ class ArpCurses():
         victim = utils.makeTextBox(self.base_Y,self.base_X,16)
         router = utils.makeTextBox(self.base_Y,self.base_X+23,16)
 
-        #select interface for this session
-        interface = self.__drawSelectInterface()
-        
         self.stdscr.clear()
-        
+
         #initialize modules
-        attack = arpAttack.ArpAttack(self.stdscr,interface)
-        scan = arpScan.ArpScan(self.stdscr,interface)
-        network = arpNetwork.ArpNetwork(self.stdscr,interface)
-        
+        attack = arpAttack.ArpAttack(self.stdscr,conf.iface)
+        scan = arpScan.ArpScan(self.stdscr,conf.iface)
+        network = arpNetwork.ArpNetwork(self.stdscr,conf.iface)
+
         #future features
-        sniff = arpSniff.ArpSniff(self.stdscr,interface)
-        
+        sniff = arpSniff.ArpSniff(self.stdscr,conf.iface)
+
         self.__drawTabContent()
         digit = self.stdscr.getkey()
-        
+
         while 1:
             if digit == "1":
                 digit = attack.main(victim,router)
@@ -94,38 +91,14 @@ class ArpCurses():
             elif digit == "q":
                 if utils.quitBox(self.stdscr,6,15,
                     "Do you really want to quit?",""):
-                    tools.firewallBlockingConf(interface)
+                    tools.firewallBlockingConf(conf.iface)
                     sys.exit(1)
                 else:
                     self.__drawTabContent()
                     digit = self.stdscr.getkey()
             else:
                 digit = self.stdscr.getkey()
-                
-    def __drawSelectInterface(self):
-        iface = utils.makeTextBox(7,20,10)
-        interface = ""
-        while 1:
-            self.stdscr.addstr(0, 0, (" "*self.length_win),
-                curses.color_pair(2))
-            self.stdscr.addstr(0, 0, "Please set your network interface",
-                curses.color_pair(2))
-            utils.drawTitle(self.stdscr,1,10)
-            utils.drawBox(self.stdscr,7,20,20,interface,"iFace")
-            try:
-                interface = iface.edit().strip()
-                if interface == conf.iface:
-                    tools.firewallBlockingConf(interface)
-                    break
-                else:
-                    utils.infoBox(self.stdscr,6,15,
-                        " Interface not found ","Error!")
-            except:
-                utils.infoBox(self.stdscr,6,15,
-                    " Error to set interface ","Error!")
-            self.stdscr.clear()
-        return interface
-    
+
     def __drawTabContent(self):
         self.stdscr.clear()
         utils.drawMenuBar(self.stdscr,self.length_win)
