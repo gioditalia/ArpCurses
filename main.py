@@ -1,7 +1,7 @@
 #!/usr/bin/python
 
 """
-    ArpCurses v1.0 - The ArpPoisoning tool. 
+    ArpCurses v1.0 - The ArpPoisoning tool.
     Copyright (C) 2016  Giovanni D'Italia
 
     This program is free software: you can redistribute it and/or modify
@@ -17,13 +17,14 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 
-import arpCurses
 import os
 import sys
+import arpCurses
+
 
 if __name__ == "__main__":
     if os.getuid() == 0:
-       arpCurses.ArpCurses()
+        arpCurses.ArpCurses()
     else:
-       print("\n\nI need ROOT permissions.\
-        Sorry.\n\nPlease type: sudo "+sys.argv[0]+"\n\n")
+        print("\n\nI need ROOT permissions.\
+            Sorry.\n\nPlease type: sudo "+sys.argv[0]+"\n\n")
