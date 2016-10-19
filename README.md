@@ -6,7 +6,7 @@
 There are several tools much more comprehensive and flexible than this, but I wrote this software because I wanted something for everyone.
 That does three simple things:
 * Network scan
-* arp poisoning (with redirection to a proxy :smiling_imp:injection:smiling_imp:)
+* arp poisoning (with optional redirection to a proxy :smiling_imp:injection:smiling_imp:)
 * sniffing
 
 ##### How to use
