@@ -30,7 +30,7 @@ def drawTitle(stdscr, y, x):
                   curses.color_pair(1))
     stdscr.addstr(y+3, x, " /_/ \_\_| | .__/\___\_,_|_| /__/\___/__/",
                   curses.color_pair(1))
-    stdscr.addstr(y+4, x, "           |_| The ArpPoisoning tool     ",
+    stdscr.addstr(y+4, x, "           |_| The ArpPoisoning tool for dummies",
                   curses.color_pair(1))
     stdscr.refresh()
 
