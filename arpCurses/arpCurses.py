@@ -72,8 +72,6 @@ class ArpCurses():
         attack = arpAttack.ArpAttack(self.stdscr, conf.iface)
         scan = arpScan.ArpScan(self.stdscr, conf.iface)
         network = arpNetwork.ArpNetwork(self.stdscr, conf.iface)
-
-        # future features
         sniff = arpSniff.ArpSniff(self.stdscr, conf.iface)
 
         self.__drawTabContent()
