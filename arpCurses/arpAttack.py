@@ -23,72 +23,71 @@ import threading
 import utils
 import curses.textpad
 
+
 class ArpAttack():
 
-    def __init__(self,stdscr,interface):
+    def __init__(self, stdscr, interface):
 
         self.base_X = 1
         self.base_Y = 2
         self.length_win = 80
         self.stdscr = stdscr
 
-
-
-        self.interface = interface #physical interface
-        self.attack_status = False #attack status
-        self.forward_status = False #forward status
-        self.to_proxy_status = False # send to proxy status
+        self.interface = interface  # physical interface
+        self.attack_status = False  # attack status
+        self.forward_status = False  # forward status
+        self.to_proxy_status = False  # send to proxy status
         self.ports = ""
         self.ports_show = ""
-        self.ports_list = utils.makeTextBox(self.base_Y+8,self.base_X+23,100)
-        #init poison module
-        self.arp_poison=poison.ArpPoison(iface=self.interface)
+        self.ports_list = utils.makeTextBox(self.base_Y+8, self.base_X+23, 100)
+        # init poison module
+        self.arp_poison = poison.ArpPoison(iface=self.interface)
 
-    def main(self,victim,router):
+    def main(self, victim, router):
 
-        self.victim_ip = victim.gather().strip() #victim address
+        self.victim_ip = victim.gather().strip()  # victim address
         if self.victim_ip != "":
             self.arp_poison.setVictim(self.victim_ip)
-        self.router_ip = router.gather().strip() #router address
+        self.router_ip = router.gather().strip()  # router address
         if self.router_ip != "":
             self.arp_poison.setRouter(self.router_ip)
 
         while 1:
             self.__drawTabContent()
 
-            #wait key's pression
+            # wait key's pression
             digit = self.stdscr.getkey()
 
-            #arpcurses generic menu
-            if digit == "2" or digit == "3" or digit == "4" or digit == "q":
+            # arpcurses generic menu
+            if utils.menuSelects(digit):
                 return digit
 
-            #attack menu
-            if digit == "v":    #set victim ip
+            # attack menu
+            if digit == "v":  # set victim ip
                 try:
-                    self.victim_ip = victim.edit().strip() #remove empty
-                    self.arp_poison.setVictim(self.victim_ip)    #space on strings
+                    self.victim_ip = victim.edit().strip()
+                    self.arp_poison.setVictim(self.victim_ip)
                 except:
-                    utils.infoBox(self.stdscr,self.base_Y+1,self.base_X+10,
-                            " Invalid victim IP ","Error!")
+                    utils.infoBox(self.stdscr, self.base_Y+1, self.base_X+10,
+                                  " Invalid victim IP ", "Error!")
                     self.victim_ip = ""
 
-            if digit == "r":    #set router ip
+            if digit == "r":  # set router ip
                 try:
                     self.router_ip = router.edit().strip()
                     self.arp_poison.setRouter(self.router_ip)
                 except:
-                    utils.infoBox(self.stdscr,self.base_Y+1,self.base_X+10,
-                            " Invalid router IP ","Error!")
+                    utils.infoBox(self.stdscr, self.base_Y+1, self.base_X+10,
+                                  " Invalid router IP ", "Error!")
                     self.router_ip = ""
 
-            if digit == "s":    #start/stop attack
+            if digit == "s":  # start/stop attack
                 if self.victim_ip == "":
-                    utils.infoBox(self.stdscr,self.base_Y+1,self.base_X+10,
-                        " You must set victim IP ","Error!")
+                    utils.infoBox(self.stdscr, self.base_Y+1, self.base_X+10,
+                                  " You must set victim IP ", "Error!")
                 elif self.router_ip == "":
-                    utils.infoBox(self.stdscr,self.base_Y+1,self.base_X+10,
-                        " You must set router IP ","Error!")
+                    utils.infoBox(self.stdscr, self.base_Y+1, self.base_X+10,
+                                  " You must set router IP ", "Error!")
                 else:
                     self.attack_status = not self.attack_status
                     if self.attack_status:
@@ -99,12 +98,12 @@ class ArpAttack():
                         except:
                             self.attack_status = False
                             utils.infoBox(self.stdscr,
-                                self.base_Y+1,self.base_X+1,
-                                " Something going wrong, \
-                                control your settings ",
-                                "Error!")
+                                          self.base_Y+1, self.base_X+1,
+                                          " Something going wrong, \
+                                          control your settings ",
+                                          "Error!")
 
-            if digit == "d":    #forward/block connections
+            if digit == "d":  # forward/block connections
                 try:
                     self.forward_status = not self.forward_status
                     if self.forward_status:
@@ -113,148 +112,150 @@ class ArpAttack():
                         tools.firewallBlockingConf(self.interface)
                 except:
                         self.forward_status = not self.forward_status
-                        utils.infoBox(self.stdscr,self.base_Y+1,self.base_X+1,
-                            " Something going wrong, control your settings ",
-                            "Error!")
+                        utils.infoBox(self.stdscr, self.base_Y+1,
+                                      self.base_X+1,
+                                      " Something going wrong,"
+                                      " control your settings ",
+                                      "Error!")
 
-            if digit == "x":    #send/block packet to proxy
-                #try:
+            if digit == "x":  # send/block packet to proxy
+                # try:
                     self.to_proxy_status = not self.to_proxy_status
                     if self.to_proxy_status:
-                        tools.enableIptables(self.interface,self.ports.split(","),"127.0.0.1")
+                        tools.enableIptables(self.interface,
+                                             self.ports.split(","),
+                                             "127.0.0.1")
                     else:
                         tools.disableIptables()
-                #except:
-                #    utils.infoBox(self.stdscr,self.base_Y+1,self.base_X+1,
-                #            " Something going wrong, control your settings ",
-                #            "Error!")
-            if digit == "p":    #set ports list
+            if digit == "p":  # set ports list
                 try:
 
                     self.__drawPorts()
                     self.ports = self.ports_list.edit().strip()
                     self.ports_show = self.ports
                     if len(self.ports_show) > 18:
-                        self.ports_show ="[%s...%s]" \
-                        %(self.ports_show[:5],self.ports_show[-5:])
+                        self.ports_show = "[%s...%s]" % (self.ports_show[:5],
+                                                         self.ports_show[-5:])
                 except:
-                    utils.infoBox(self.stdscr,self.base_Y+1,self.base_X+10,
-                        " Invalid ports list ","Error!")
+                    utils.infoBox(self.stdscr, self.base_Y+1, self.base_X+10,
+                                  " Invalid ports list ", "Error!")
                     self.ports = ""
 
     def __attack(self):
         """Manage attack loop"""
-        while self.attack_status: #stop thread when attack_status is FALSE
+        while self.attack_status:  # stop thread when attack_status is FALSE
             self.arp_poison.attack()
             time.sleep(5)
 
     def __drawPorts(self):
-        utils.drawBox(self.stdscr,self.base_Y+8,self.base_X+23,20,self.ports,
-            "Ports")
+        utils.drawBox(self.stdscr, self.base_Y+8, self.base_X+23, 20,
+                      self.ports, "Ports")
         self.stdscr.addstr(self.base_Y+8, self.base_X+24, "P",
-            curses.color_pair(2))
+                           curses.color_pair(2))
         self.stdscr.refresh()
 
     def __drawTabContent(self):
-        #clear screen
+        # clear screen
         self.stdscr.clear()
 
-        #draw textbox with label
-        utils.drawBox(self.stdscr,self.base_Y,self.base_X,20,self.victim_ip,
-            "Victim")
-        self.stdscr.addstr(self.base_Y,self.base_X+1,"V",
-            curses.color_pair(2))
+        # draw textbox with label
+        utils.drawBox(self.stdscr, self.base_Y, self.base_X, 20,
+                      self.victim_ip, "Victim")
+        self.stdscr.addstr(self.base_Y, self.base_X+1, "V",
+                           curses.color_pair(2))
 
-        utils.drawBox(self.stdscr,self.base_Y,self.base_X+23,20,self.router_ip,
-            "Router")
+        utils.drawBox(self.stdscr, self.base_Y, self.base_X+23, 20,
+                      self.router_ip, "Router")
         self.stdscr.addstr(self.base_Y, self.base_X+24, "R",
-            curses.color_pair(2))
+                           curses.color_pair(2))
 
-        utils.drawBox(self.stdscr,self.base_Y+4,self.base_X+23,20,
-            self.interface,"iFace")
+        utils.drawBox(self.stdscr, self.base_Y+4, self.base_X+23, 20,
+                      self.interface, "iFace")
 
-        utils.drawBox(self.stdscr,self.base_Y+8,self.base_X+23,20,self.ports_show,
-            "Ports")
+        utils.drawBox(self.stdscr, self.base_Y+8, self.base_X+23, 20,
+                      self.ports_show, "Ports")
         self.stdscr.addstr(self.base_Y+8, self.base_X+24, "P",
-            curses.color_pair(2))
+                           curses.color_pair(2))
 
-        #draw Start/Stop status box
-        curses.textpad.rectangle(self.stdscr,
-            self.base_Y,self.base_X+45, self.base_Y+6, self.base_X+58)
-        self.stdscr.addstr(self.base_Y, self.base_X+45, "Start/Stop",
-            curses.color_pair(1))
-        self.stdscr.addstr(self.base_Y, self.base_X+45, "S",
-            curses.color_pair(2))
+        # draw Start/Stop status box
+        curses.textpad.rectangle(self.stdscr, self.base_Y, self.base_X+45,
+                                 self.base_Y+6, self.base_X+58)
+        self.stdscr.addstr(self.base_Y, self.base_X+45,
+                           "Start/Stop", curses.color_pair(1))
+        self.stdscr.addstr(self.base_Y, self.base_X+45,
+                           "S", curses.color_pair(2))
 
-        if self.attack_status == False:
+        if self.attack_status is False:
             self.stdscr.addstr(self.base_Y+1, self.base_X+46, "            ",
-                curses.color_pair(3))
+                               curses.color_pair(3))
             self.stdscr.addstr(self.base_Y+2, self.base_X+46, "   START    ",
-                curses.color_pair(3))
+                               curses.color_pair(3))
             self.stdscr.addstr(self.base_Y+3, self.base_X+46, "   ATTACK   ",
-                curses.color_pair(3))
+                               curses.color_pair(3))
             self.stdscr.addstr(self.base_Y+4, self.base_X+46, "            ",
-                curses.color_pair(3))
+                               curses.color_pair(3))
             self.stdscr.addstr(self.base_Y+5, self.base_X+46, "            ",
-                curses.color_pair(3))
-            self.stdscr.addstr(self.base_Y+12,0, "attack stopped...",
-                curses.color_pair(2))
+                               curses.color_pair(3))
+            self.stdscr.addstr(self.base_Y+12, 0, "attack stopped...",
+                               curses.color_pair(2))
         else:
             self.stdscr.addstr(self.base_Y+1, self.base_X+46, "            ",
-                curses.color_pair(2))
+                               curses.color_pair(2))
             self.stdscr.addstr(self.base_Y+2, self.base_X+46, "    STOP    ",
-                curses.color_pair(2))
+                               curses.color_pair(2))
             self.stdscr.addstr(self.base_Y+3, self.base_X+46, "   ATTACK   ",
-                curses.color_pair(2))
+                               curses.color_pair(2))
             self.stdscr.addstr(self.base_Y+4, self.base_X+46, "            ",
-                curses.color_pair(2))
+                               curses.color_pair(2))
             self.stdscr.addstr(self.base_Y+5, self.base_X+46, "            ",
-                curses.color_pair(2))
-            self.stdscr.addstr(self.base_Y+12,0, "running attack...",
-                curses.color_pair(3))
+                               curses.color_pair(2))
+            self.stdscr.addstr(self.base_Y+12, 0, "running attack...",
+                               curses.color_pair(3))
 
-        #draw forwarding status box
+        # draw forwarding status box
         curses.textpad.rectangle(self.stdscr,
-            self.base_Y+4,self.base_X, self.base_Y+6, self.base_X+20)
+                                 self.base_Y+4, self.base_X,
+                                 self.base_Y+6, self.base_X+20)
         self.stdscr.addstr(self.base_Y+4, self.base_X+1, "ForwarDing",
-            curses.color_pair(1))
+                           curses.color_pair(1))
         self.stdscr.addstr(self.base_Y+4, self.base_X+7, "D",
-            curses.color_pair(2))
+                           curses.color_pair(2))
 
-        if self.forward_status == False:
+        if self.forward_status is False:
             self.stdscr.addstr(self.base_Y+5, self.base_X+1,
-                "       Active      ",curses.color_pair(3))
-            self.stdscr.addstr(self.base_Y+13,0,
-                "blocking packets...",curses.color_pair(2))
+                               "       Active      ", curses.color_pair(3))
+            self.stdscr.addstr(self.base_Y+13, 0,
+                               "blocking packets...", curses.color_pair(2))
         else:
             self.stdscr.addstr(self.base_Y+5, self.base_X+1,
-                "     Deactive      ",curses.color_pair(2))
-            self.stdscr.addstr(self.base_Y+13,0,
-                "forwarding packets...",curses.color_pair(3))
+                               "     Deactive      ", curses.color_pair(2))
+            self.stdscr.addstr(self.base_Y+13, 0,
+                               "forwarding packets...", curses.color_pair(3))
 
-        #draw iptables status box
+        # draw iptables status box
         curses.textpad.rectangle(self.stdscr,
-            self.base_Y+8,self.base_X, self.base_Y+10, self.base_X+20)
+                                 self.base_Y+8, self.base_X,
+                                 self.base_Y+10, self.base_X+20)
         self.stdscr.addstr(self.base_Y+8, self.base_X+1, "Forward to proxy",
-            curses.color_pair(1))
+                           curses.color_pair(1))
         self.stdscr.addstr(self.base_Y+8, self.base_X+15, "x",
-            curses.color_pair(2))
+                           curses.color_pair(2))
 
-        if self.to_proxy_status == False:
+        if self.to_proxy_status is False:
             self.stdscr.addstr(self.base_Y+9, self.base_X+1,
-                "       Active      ",curses.color_pair(3))
-            #self.stdscr.addstr(self.base_Y+13,0,
+                               "       Active      ", curses.color_pair(3))
+            # self.stdscr.addstr(self.base_Y+13,0,
             #    "blocking packets...",curses.color_pair(2))
         else:
             self.stdscr.addstr(self.base_Y+9, self.base_X+1,
-                "     Deactive      ",curses.color_pair(2))
-            #self.stdscr.addstr(self.base_Y+13,0,
+                               "     Deactive      ", curses.color_pair(2))
+            # self.stdscr.addstr(self.base_Y+13,0,
             #    "forwarding packets...",curses.color_pair(3))
 
-        #draw status info at the bottom of the tab
+        # draw status info at the bottom of the tab
         self.stdscr.addstr(self.base_Y+11, 0, "Status:")
 
-        #draw tabs navigator
-        utils.drawMenuBar(self.stdscr,self.length_win)
-        self.stdscr.addstr(0, 0, "1.Attack",curses.color_pair(3))
+        # draw tabs navigator
+        utils.drawMenuBar(self.stdscr, self.length_win)
+        self.stdscr.addstr(0, 0, "1.Attack", curses.color_pair(3))
         self.stdscr.refresh()

