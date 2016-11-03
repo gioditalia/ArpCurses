@@ -1,0 +1,6 @@
+{
+  "name": "Arpcurses",
+  "tagline": "The ArpPoisoning tool for dummies",
+  "body": "# ArpCurses\r\n### A scapy-based arp poisoning with curses interface.\r\n###### Compatible only with GNU/Linux (IPTABLES required)\r\n\r\n## About\r\nThere are several tools much more comprehensive and flexible than this, but I wrote this software because I wanted something for everyone.\r\nThat does three simple things:\r\n* Network scan\r\n* arp poisoning (with optional redirection to a proxy :smiling_imp:injection:smiling_imp:)\r\n* sniffing\r\n\r\n## How to use\r\nDownload source\r\n\r\n```\r\ngit clone https://github.com/gioditalia/ArpCurses.git\r\ncd ArpCurses\r\n```\r\n\r\nGet root privileges\r\n\r\n```\r\nsu\r\n```\r\n\r\nor\r\n\r\n```\r\nsudo su\r\n```\r\n\r\nInstall requirements and run!\r\n\r\n```\r\npip install -r requirements.txt\r\n./main\r\n```\r\n\r\n**Note:** *You must have a root permission to use this tool properly*",
+  "note": "Don't delete this file! It's used internally to help with page regeneration."
+}
